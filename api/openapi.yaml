@@ -1,0 +1,386 @@
+openapi: 3.0.1
+info:
+  title: ProMed API
+  description: A RESTful API to process user queries to our databse of ProMed disease
+    reports
+  contact:
+    email: z5258840@ad.unsw.edu.au
+  version: 1.0.0
+servers:
+- url: "https://p5t20q9fz6.execute-api.ap-southeast-2.amazonaws.com/{basePath}"
+  variables:
+    basePath:
+      default: ProMedApi
+tags:
+- name: search
+  description: Perform a search query on the ProMed disease report database
+- name: report
+  description: Access an individual disease report
+- name: article
+  description: Access an individual article
+- name: live
+  description: Check if the server is live
+paths:
+  /search:
+    get:
+      tags:
+      - search
+      summary: Search the ProMed database
+      description: Enter parameters to perform a search
+      operationId: search
+      parameters:
+      - name: start_date
+        in: query
+        description: The start date of the period of interest for disease reports
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 2022-01-01T00:00:00
+      - name: end_date
+        in: query
+        description: The end date of the period of interest for disease reports
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: 2022-01-02T00:00:00
+      - name: key_terms
+        in: query
+        description: A list of key terms for disease reports
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          example:
+          - measles
+          - outbreak
+          items:
+            type: string
+      - name: location
+        in: query
+        description: The location for disease reports
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: sydney
+      - name: timezone
+        in: query
+        description: The timezone for disease reports
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: utc+10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Search'
+                x-content-type: application/json
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/inline_response_400'
+                x-content-type: application/json
+      x-swagger-router-controller: Search
+  /report:
+    get:
+      tags:
+      - report
+      summary: Request a specific disease report
+      description: Enter report ID to perform a request
+      operationId: report
+      parameters:
+      - name: report_id
+        in: query
+        description: The ID of the requested report
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 76483
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400_1'
+      x-swagger-router-controller: Report
+  /article:
+    get:
+      tags:
+      - article
+      summary: Request a specific article
+      description: Enter article ID to perform a request
+      operationId: article
+      parameters:
+      - name: article_id
+        in: query
+        description: The ID of the requested article
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 76483
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400_2'
+      x-swagger-router-controller: Article
+  /live:
+    get:
+      tags:
+      - live
+      summary: Check if the server is live
+      description: The server will return its live status and version
+      operationId: live
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Live'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Live'
+      x-swagger-router-controller: Live
+components:
+  schemas:
+    Search:
+      type: object
+      properties:
+        url:
+          type: string
+          example: www.promed.com/measles-outbreak-sydney-2022
+        date_of_publication:
+          type: string
+          example: 2022-01-05 xx:xx:xx
+        headline:
+          type: string
+          example: Measles Outbreak in Sydney
+        main_text:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+            \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+            \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae\
+            \ mauris volutpat dignissim. Cras facilisis dui eleifend viverra sagittis.\
+            \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
+            \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
+            \ vel nunc eu  lobortis."
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_reports'
+      example:
+        reports:
+        - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          - measles
+          locations:
+          - country: Australia
+            location: Sydney
+          - country: Australia
+            location: Sydney
+          syndromes:
+          - outbreak
+          - outbreak
+        - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          - measles
+          locations:
+          - country: Australia
+            location: Sydney
+          - country: Australia
+            location: Sydney
+          syndromes:
+          - outbreak
+          - outbreak
+        date_of_publication: 2022-01-05 xx:xx:xx
+        main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+          \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+          \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae mauris\
+          \ volutpat dignissim. Cras facilisis dui eleifend viverra sagittis. Cras\
+          \ eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus blandit\
+          \ maximus mi, quis lacinia odio viverra ac. Phasellus dapibus vel nunc eu\
+          \  lobortis."
+        headline: Measles Outbreak in Sydney
+        url: www.promed.com/measles-outbreak-sydney-2022
+    Report:
+      type: object
+      properties:
+        event_date:
+          type: string
+          example: 2022-01-05 xx:xx:xx to 2022-01-05
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_locations'
+        diseases:
+          type: array
+          items:
+            type: string
+            example: measles
+        syndromes:
+          type: array
+          items:
+            type: string
+            example: outbreak
+      example:
+        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+        diseases:
+        - measles
+        - measles
+        locations:
+        - country: Australia
+          location: Sydney
+        - country: Australia
+          location: Sydney
+        syndromes:
+        - outbreak
+        - outbreak
+    Article:
+      type: object
+      properties:
+        url:
+          type: string
+          example: www.promed.com/measles-outbreak-sydney-2022
+        date_of_publication:
+          type: string
+          example: 2022-01-05 xx:xx:xx
+        headline:
+          type: string
+          example: Measles Outbreak in Sydney
+        main_text:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+            \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+            \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae\
+            \ mauris volutpat dignissim. Cras facilisis dui eleifend viverra sagittis.\
+            \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
+            \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
+            \ vel nunc eu  lobortis."
+      example:
+        date_of_publication: 2022-01-05 xx:xx:xx
+        main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+          \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+          \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae mauris\
+          \ volutpat dignissim. Cras facilisis dui eleifend viverra sagittis. Cras\
+          \ eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus blandit\
+          \ maximus mi, quis lacinia odio viverra ac. Phasellus dapibus vel nunc eu\
+          \  lobortis."
+        headline: Measles Outbreak in Sydney
+        url: www.promed.com/measles-outbreak-sydney-2022
+    Live:
+      type: object
+      properties:
+        live:
+          type: boolean
+          example: true
+        version:
+          type: string
+          example: 1.0.0
+      example:
+        version: 1.0.0
+        live: true
+    inline_response_400:
+      type: object
+      properties:
+        error:
+          type: string
+          example: start_date cannot be after end_date
+    inline_response_400_1:
+      type: object
+      properties:
+        error:
+          type: string
+          example: not a valid report ID
+    inline_response_400_2:
+      type: object
+      properties:
+        error:
+          type: string
+          example: not a valid article ID
+    Search_locations:
+      type: object
+      properties:
+        country:
+          type: string
+          example: Australia
+        location:
+          type: string
+          example: Sydney
+      example:
+        country: Australia
+        location: Sydney
+    Search_reports:
+      type: object
+      properties:
+        event_date:
+          type: string
+          example: 2022-01-05 xx:xx:xx to 2022-01-05
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_locations'
+        diseases:
+          type: array
+          items:
+            type: string
+            example: measles
+        syndromes:
+          type: array
+          items:
+            type: string
+            example: outbreak
+      example:
+        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+        diseases:
+        - measles
+        - measles
+        locations:
+        - country: Australia
+          location: Sydney
+        - country: Australia
+          location: Sydney
+        syndromes:
+        - outbreak
+        - outbreak
