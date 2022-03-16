@@ -31,7 +31,7 @@ paths:
       parameters:
       - name: start_date
         in: query
-        description: The start date of the period of interest for disease reports
+        description: The start date of the period of interest for disease reports (must be in yyyy-MM-ddTHH:mm:ss format)
         required: true
         style: form
         explode: true
