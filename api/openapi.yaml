@@ -26,7 +26,7 @@ paths:
       tags:
       - search
       summary: Search the ProMed database
-      description: Enter parameters to perform a search
+      description: Enter parameters to perform a search that will return all valid ProMed articles
       operationId: search
       parameters:
       - name: start_date
@@ -40,7 +40,7 @@ paths:
           example: 2022-01-01T00:00:00
       - name: end_date
         in: query
-        description: The end date of the period of interest for disease reports
+        description: The end date of the period of interest for disease reports (must be in yyyy-MM-ddTHH:mm:ss format)
         required: true
         style: form
         explode: true
@@ -49,7 +49,7 @@ paths:
           example: 2022-01-02T00:00:00
       - name: key_terms
         in: query
-        description: A list of key terms for disease reports
+        description: A list of key terms found in disease reports
         required: true
         style: form
         explode: true
@@ -71,7 +71,7 @@ paths:
           example: sydney
       - name: timezone
         in: query
-        description: The timezone for disease reports
+        description: The timezone for disease reports (optional)
         required: false
         style: form
         explode: true
