@@ -25,7 +25,7 @@ paths:
       description: The server will return its live status and active version
       operationId: live
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
@@ -209,26 +209,18 @@ components:
         - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
           diseases:
           - measles
-          - measles
           locations:
           - country: Australia
             location: Sydney
-          - country: Australia
-            location: Sydney
           syndromes:
-          - outbreak
           - outbreak
         - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
           diseases:
           - measles
-          - measles
           locations:
           - country: Australia
             location: Sydney
-          - country: Australia
-            location: Sydney
           syndromes:
-          - outbreak
           - outbreak
         date_of_publication: 2022-01-05 xx:xx:xx
         main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
@@ -264,14 +256,10 @@ components:
         event_date: 2022-01-05 xx:xx:xx to 2022-01-05
         diseases:
         - measles
-        - measles
         locations:
         - country: Australia
           location: Sydney
-        - country: Australia
-          location: Sydney
         syndromes:
-        - outbreak
         - outbreak
     Article:
       type: object
@@ -407,12 +395,8 @@ components:
         event_date: 2022-01-05 xx:xx:xx to 2022-01-05
         diseases:
         - measles
-        - measles
         locations:
         - country: Australia
           location: Sydney
-        - country: Australia
-          location: Sydney
         syndromes:
-        - outbreak
         - outbreak
