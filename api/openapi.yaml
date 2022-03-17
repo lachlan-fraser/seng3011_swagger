@@ -1,32 +1,49 @@
 openapi: 3.0.1
 info:
-  title: ProMed API
-  description: A RESTful API to process user queries to our databse of ProMed disease
-    reports
+  title: ProMED API
+  description: A RESTful API to process user queries to our databse of disease reports constructed from the ProMED website
   contact:
     email: z5258840@ad.unsw.edu.au
   version: 1.0.0
 servers:
-- url: "https://p5t20q9fz6.execute-api.ap-southeast-2.amazonaws.com/{basePath}"
-  variables:
-    basePath:
-      default: ProMedApi
+- url: "https://p5t20q9fz6.execute-api.ap-southeast-2.amazonaws.com/ProMedApi"
 tags:
+- name: live
+  description: Check if the API server is live
 - name: search
-  description: Perform a search query on the ProMed disease report database
+  description: Perform a search query on the ProMED disease report database
 - name: report
   description: Access an individual disease report
 - name: article
   description: Access an individual article
-- name: live
-  description: Check if the server is live
 paths:
+  /live:
+    get:
+      tags:
+      - live
+      summary: Check if the API server is live
+      description: The server will return its live status and active version
+      operationId: live
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Live'
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Live_Error'
+      x-swagger-router-controller: Live
   /search:
     get:
       tags:
       - search
-      summary: Search the ProMed database
-      description: Enter parameters to perform a search that will return all valid ProMed articles
+      summary: Search the ProMED database
+      description: Enter parameters to perform a search that will return all valid ProMED disease reports
       operationId: search
       parameters:
       - name: start_date
@@ -49,7 +66,7 @@ paths:
           example: 2022-01-02T00:00:00
       - name: key_terms
         in: query
-        description: A list of key terms found in disease reports
+        description: A list of key terms to find in disease reports
         required: true
         style: form
         explode: true
@@ -62,7 +79,7 @@ paths:
             type: string
       - name: location
         in: query
-        description: The location for disease reports
+        description: The location of interest for disease reports
         required: true
         style: form
         explode: true
@@ -71,7 +88,7 @@ paths:
           example: sydney
       - name: timezone
         in: query
-        description: The timezone for disease reports (optional)
+        description: The timezone of interest for disease reports (optional)
         required: false
         style: form
         explode: true
@@ -95,7 +112,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/inline_response_400'
+                  $ref: '#/components/schemas/Search_Error'
                 x-content-type: application/json
       x-swagger-router-controller: Search
   /report:
@@ -127,7 +144,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_400_1'
+                $ref: '#/components/schemas/Report_Error'
       x-swagger-router-controller: Report
   /article:
     get:
@@ -158,29 +175,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_400_2'
+                $ref: '#/components/schemas/Article_Error'
       x-swagger-router-controller: Article
-  /live:
-    get:
-      tags:
-      - live
-      summary: Check if the server is live
-      description: The server will return its live status and version
-      operationId: live
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Live'
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Live'
-      x-swagger-router-controller: Live
 components:
   schemas:
     Search:
@@ -207,7 +203,7 @@ components:
         reports:
           type: array
           items:
-            $ref: '#/components/schemas/Search_reports'
+            $ref: '#/components/schemas/Search_Reports'
       example:
         reports:
         - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
@@ -253,7 +249,7 @@ components:
         locations:
           type: array
           items:
-            $ref: '#/components/schemas/Search_locations'
+            $ref: '#/components/schemas/Search_Locations'
         diseases:
           type: array
           items:
@@ -309,7 +305,7 @@ components:
           \  lobortis."
         headline: Measles Outbreak in Sydney
         url: www.promed.com/measles-outbreak-sydney-2022
-    Live:
+    Live1:
       type: object
       properties:
         live:
@@ -321,25 +317,37 @@ components:
       example:
         version: 1.0.0
         live: true
-    inline_response_400:
+    Live_Error:
+      type: object
+      properties:
+        live:
+          type: boolean
+          example: false
+        version:
+          type: string
+          example: 1.0.0
+      example:
+        version: 1.0.0
+        live: false
+    Search_Error:
       type: object
       properties:
         error:
           type: string
           example: start_date cannot be after end_date
-    inline_response_400_1:
+    Report_Error:
       type: object
       properties:
         error:
           type: string
           example: not a valid report ID
-    inline_response_400_2:
+    Article_Error:
       type: object
       properties:
         error:
           type: string
           example: not a valid article ID
-    Search_locations:
+    Search_Locations:
       type: object
       properties:
         country:
@@ -351,7 +359,7 @@ components:
       example:
         country: Australia
         location: Sydney
-    Search_reports:
+    Search_Reports:
       type: object
       properties:
         event_date:
@@ -360,7 +368,7 @@ components:
         locations:
           type: array
           items:
-            $ref: '#/components/schemas/Search_locations'
+            $ref: '#/components/schemas/Search_Locations'
         diseases:
           type: array
           items:
