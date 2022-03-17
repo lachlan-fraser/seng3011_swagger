@@ -334,7 +334,7 @@ components:
       properties:
         errorMessage:
           type: string
-          example: Error: end_date before start_date
+          example: 'Error: end_date before start_date'
         errorType:
           type: string
           example: Exception
@@ -347,7 +347,7 @@ components:
       properties:
         errorMessage:
           type: string
-          example: Error: invalid report ID
+          example: 'Error: invalid report ID'
         errorType:
           type: string
           example: Exception
@@ -360,7 +360,7 @@ components:
       properties:
         errorMessage:
           type: string
-          example: Error: invalid article ID
+          example: 'Error: invalid article ID'
         errorType:
           type: string
           example: Exception
