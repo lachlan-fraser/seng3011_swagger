@@ -340,7 +340,8 @@ components:
           example: Exception
         stackTrace:
           type: array
-            items: string
+          items:
+            type: string
             example: raise Exception
     Report_Error:
       type: object
@@ -353,7 +354,8 @@ components:
           example: Exception
         stackTrace:
           type: array
-            items: string
+          items:
+            type: string
             example: raise Exception
     Article_Error:
       type: object
@@ -366,7 +368,8 @@ components:
           example: Exception
         stackTrace:
           type: array
-            items: string
+          items:
+            type: string
             example: raise Exception
     Search_Locations:
       type: object
