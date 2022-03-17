@@ -162,7 +162,7 @@ paths:
         explode: true
         schema:
           type: integer
-          example: 9701991
+          example: 8701991
       responses:
         "200":
           description: OK
