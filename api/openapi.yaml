@@ -25,13 +25,13 @@ paths:
       description: The server will return its live status and active version
       operationId: live
       responses:
-        "200":
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Live'
-        "400":
+        400:
           description: Bad Request
           content:
             application/json:
