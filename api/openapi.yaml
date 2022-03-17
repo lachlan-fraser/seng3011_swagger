@@ -305,7 +305,7 @@ components:
           \  lobortis."
         headline: Measles Outbreak in Sydney
         url: www.promed.com/measles-outbreak-sydney-2022
-    Live1:
+    Live:
       type: object
       properties:
         live:
