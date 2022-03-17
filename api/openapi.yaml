@@ -54,7 +54,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: '2022-01-01T00:00:00'
+          example: '2022-03-05T00:00:00'
       - name: end_date
         in: query
         description: The end date of the period of interest for disease reports (must be in yyyy-MM-ddTHH:mm:ss format)
@@ -63,7 +63,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: '2022-01-02T00:00:00'
+          example: '2022-03-07T00:00:00'
       - name: key_terms
         in: query
         description: A list of key terms to find in disease reports
@@ -131,7 +131,7 @@ paths:
         explode: true
         schema:
           type: integer
-          example: 76483
+          example: 1
       responses:
         "200":
           description: OK
@@ -162,7 +162,7 @@ paths:
         explode: true
         schema:
           type: integer
-          example: 76483
+          example: 9701991
       responses:
         "200":
           description: OK
@@ -332,21 +332,42 @@ components:
     Search_Error:
       type: object
       properties:
-        error:
+        errorMessage:
           type: string
-          example: start_date cannot be after end_date
+          example: Error: end_date before start_date
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+            items: string
+            example: raise Exception
     Report_Error:
       type: object
       properties:
-        error:
+        errorMessage:
           type: string
-          example: not a valid report ID
+          example: Error: invalid report ID
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+            items: string
+            example: raise Exception
     Article_Error:
       type: object
       properties:
-        error:
+        errorMessage:
           type: string
-          example: not a valid article ID
+          example: Error: invalid article ID
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+            items: string
+            example: raise Exception
     Search_Locations:
       type: object
       properties:
