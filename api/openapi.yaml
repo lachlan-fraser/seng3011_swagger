@@ -54,7 +54,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: 2022-01-01T00:00:00
+          example: '2022-01-01T00:00:00'
       - name: end_date
         in: query
         description: The end date of the period of interest for disease reports (must be in yyyy-MM-ddTHH:mm:ss format)
@@ -63,7 +63,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: 2022-01-02T00:00:00
+          example: '2022-01-02T00:00:00'
       - name: key_terms
         in: query
         description: A list of key terms to find in disease reports
