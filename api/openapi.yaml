@@ -264,14 +264,17 @@ components:
                 string:
                 example: 2022-01-05 xx:xx:xx to 2022-01-05
       example:
-        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
-        diseases:
-        - measles
-        locations:
-        - country: Australia
-          location: Sydney
-        syndromes:
-        - outbreak
+        report_id: 21
+        article_id: 8701991
+        report:
+          event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          locations:
+          - country: Australia
+            location: Sydney
+          syndromes:
+          - outbreak
     Article:
       type: object
       properties:
