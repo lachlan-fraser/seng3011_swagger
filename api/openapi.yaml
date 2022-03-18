@@ -218,8 +218,8 @@ components:
           diseases:
           - measles
           locations:
-          - country: Australia
-            location: Sydney
+          - Australia
+          - Sydney
           syndromes:
           - outbreak
         date_of_publication: 2022-01-05 xx:xx:xx
@@ -252,7 +252,8 @@ components:
             locations:
               type: array
               items:
-                $ref: '#/components/schemas/Search_Locations'
+                type: string
+                example: Sydney
             syndromes:
               type: array
               items:
@@ -271,8 +272,8 @@ components:
           diseases:
           - measles
           locations:
-          - country: Australia
-            location: Sydney
+          - Australia
+          - Sydney
           syndromes:
           - outbreak
     Article:
@@ -296,7 +297,28 @@ components:
             \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
             \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
             \ vel nunc eu  lobortis."
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_Reports'
       example:
+        reports:
+          - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+            diseases:
+            - measles
+            locations:
+            - country: Australia
+              location: Sydney
+            syndromes:
+            - outbreak
+          - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+            diseases:
+            - measles
+            locations:
+            - Australia
+            - Sydney
+            syndromes:
+            - outbreak
         date_of_publication: 2022-01-05 xx:xx:xx
         main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
           \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
@@ -394,7 +416,8 @@ components:
         locations:
           type: array
           items:
-            $ref: '#/components/schemas/Search_Locations'
+            type: string
+            example: Australia
         diseases:
           type: array
           items:
@@ -410,7 +433,7 @@ components:
         diseases:
         - measles
         locations:
-        - country: Australia
-          location: Sydney
+        - Australia
+        - Sydney
         syndromes:
         - outbreak
