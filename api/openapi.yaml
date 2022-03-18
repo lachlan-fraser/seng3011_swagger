@@ -48,7 +48,7 @@ paths:
       parameters:
       - name: start_date
         in: query
-        description: The start date of the period of interest for disease reports (must be in yyyy-MM-dd format)
+        description: The start date of the period of interest for article publication (must be in yyyy-MM-dd format)
         required: true
         style: form
         explode: true
@@ -57,7 +57,7 @@ paths:
           example: '2022-03-02'
       - name: end_date
         in: query
-        description: The end date of the period of interest for disease reports (must be in yyyy-MM-dd format)
+        description: The end date of the period of interest for article publication (must be in yyyy-MM-dd format)
         required: true
         style: form
         explode: true
@@ -235,23 +235,34 @@ components:
     Report:
       type: object
       properties:
-        event_date:
+        report_id:
+          type: integer
+          example: 21
+        article_id:
           type: string
-          example: 2022-01-05 xx:xx:xx to 2022-01-05
-        locations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Search_Locations'
-        diseases:
-          type: array
-          items:
-            type: string
-            example: measles
-        syndromes:
-          type: array
-          items:
-            type: string
-            example: outbreak
+          example: 8701991
+        report:
+          type: object
+          properties:
+            diseases:
+              type: array
+              items:
+                type: string
+                example: measles
+            locations:
+              type: array
+              items:
+                $ref: '#/components/schemas/Search_Locations'
+            syndromes:
+              type: array
+              items:
+                type: string
+                example: outbreak
+            event_date:
+              type: array
+              items:
+                string:
+                example: 2022-01-05 xx:xx:xx to 2022-01-05
       example:
         event_date: 2022-01-05 xx:xx:xx to 2022-01-05
         diseases:
