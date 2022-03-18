@@ -54,7 +54,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: '2022-03-05'
+          example: '2022-03-02'
       - name: end_date
         in: query
         description: The end date of the period of interest for disease reports (must be in yyyy-MM-dd format)
@@ -63,7 +63,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: '2022-03-07'
+          example: '2022-03-04'
       - name: key_terms
         in: query
         description: A list of key terms to find in disease reports
@@ -85,7 +85,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: sydney
+          example: ukraine
       - name: timezone
         in: query
         description: The timezone of interest for disease reports (optional)
