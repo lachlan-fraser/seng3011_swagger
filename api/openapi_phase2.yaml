@@ -330,7 +330,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CountryCovid_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: CountryCovid
   /futurecountrycovid:
     get:
@@ -396,7 +396,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureCountryCovid_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureCountryCovid
   /unemployment:
     get:
@@ -435,7 +435,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Unemployment_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: Unemployment
   /futureunemployment:
     get:
@@ -474,7 +474,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureUnemployment_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureUnemployment
   /jobs:
     get:
@@ -513,7 +513,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Jobs_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: Jobs
   /futuresalaries:
     get:
@@ -552,7 +552,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureSalaries_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureSalaries
   /stocks:
     get:
@@ -591,7 +591,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Stocks_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: Stocks
   /futurestocks:
     get:
@@ -630,7 +630,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureStocks_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureStocks
   /exchrate:
     get:
@@ -669,7 +669,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Exchrate_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: Exchrate
   /futureexchangerates:
     get:
@@ -708,7 +708,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureExchangeRates_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureExchangeRates
   /realestate:
     get:
@@ -747,7 +747,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RealEstate_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: RealEstate
   /futurerealestate:
     get:
@@ -786,7 +786,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FutureRealEstate_Error'
+                $ref: '#/components/schemas/CountryCode_Error'
       x-swagger-router-controller: FutureRealEstate
 components:
   schemas:
@@ -853,8 +853,8 @@ components:
           diseases:
           - measles
           locations:
-          - country: Australia
-            location: Sydney
+          - Australia
+          - Sydney
           syndromes:
           - outbreak
         date_of_publication: 2022-01-05 xx:xx:xx
@@ -876,7 +876,8 @@ components:
         locations:
           type: array
           items:
-            $ref: '#/components/schemas/Search_Locations'
+            type: string
+            example: Australia
         diseases:
           type: array
           items:
@@ -887,6 +888,15 @@ components:
           items:
             type: string
             example: outbreak
+      example:
+        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+        diseases:
+        - measles
+        locations:
+        - Australia
+        - Sydney
+        syndromes:
+        - outbreak
     Search_Locations:
       type: object
       properties:
@@ -934,7 +944,28 @@ components:
             \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
             \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
             \ vel nunc eu  lobortis."
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_Reports'
       example:
+        reports:
+          - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+            diseases:
+            - measles
+            locations:
+            - country: Australia
+              location: Sydney
+            syndromes:
+            - outbreak
+          - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+            diseases:
+            - measles
+            locations:
+            - Australia
+            - Sydney
+            syndromes:
+            - outbreak
         date_of_publication: 2022-01-05 xx:xx:xx
         main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
           \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
@@ -962,32 +993,47 @@ components:
     Report:
       type: object
       properties:
-        event_date:
+        report_id:
+          type: integer
+          example: 21
+        article_id:
           type: string
-          example: 2022-01-05 xx:xx:xx to 2022-01-05
-        locations:
-          type: array
-          items:
-            $ref: '#/components/schemas/Search_Locations'
-        diseases:
-          type: array
-          items:
-            type: string
-            example: measles
-        syndromes:
-          type: array
-          items:
-            type: string
-            example: outbreak
+          example: 8701991
+        report:
+          type: object
+          properties:
+            diseases:
+              type: array
+              items:
+                type: string
+                example: measles
+            locations:
+              type: array
+              items:
+                type: string
+                example: Sydney
+            syndromes:
+              type: array
+              items:
+                type: string
+                example: outbreak
+            event_date:
+              type: array
+              items:
+                string:
+                example: 2022-01-05 xx:xx:xx to 2022-01-05
       example:
-        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
-        diseases:
-        - measles
-        locations:
-        - country: Australia
-          location: Sydney
-        syndromes:
-        - outbreak
+        report_id: 21
+        article_id: 8701991
+        report:
+          event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          locations:
+          - Australia
+          - Sydney
+          syndromes:
+          - outbreak
     Report_Error:
       type: object
       properties:
@@ -1002,3 +1048,380 @@ components:
           items:
             type: string
             example: raise Exception
+    GlobalCovid:
+      type: object
+      properties:
+        AUS:
+          type: object
+          properties:
+            03-21:
+              type: object
+              properties:
+                newCases:
+                  type: integer
+                  example: 12023
+                newDeaths:
+                  type: integer
+                  example: 204
+                totalVaccinated:
+                  type: integer
+                  example: 934876
+                percVaccinated:
+                  type: float
+                  example: 3.5
+            04-21:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        USA:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    GlobalCovid_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: Unable to retrieve global covid data'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
+    FutureGlobalCovid:
+      type: object
+      properties:
+        AUS:
+          type: object
+          properties:
+            07-22:
+              type: object
+              properties:
+                newCases:
+                  type: integer
+                  example: 2087
+                newDeaths:
+                  type: integer
+                  example: 32
+                totalVaccinated:
+                  type: integer
+                  example: 24875298
+                percVaccinated:
+                  type: float
+                  example: 98.7
+            08-22:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        USA:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    FutureGlobalCovid_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: Unable to retrieve global covid data'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
+    CountryCovid:
+      type: object
+      properties:
+        New South Wales:
+          type: object
+          properties:
+            03-21:
+              type: object
+              properties:
+                newCases:
+                  type: integer
+                  example: 3009
+                newDeaths:
+                  type: integer
+                  example: 101
+            04-21:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        Victoria:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    CountryCode_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: Invalid Country Code'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
+    FutureCountryCovid:
+      type: object
+      properties:
+        New South Wales:
+          type: object
+          properties:
+            07-22:
+              type: object
+              properties:
+                newCases:
+                  type: integer
+                  example: 512
+                newDeaths:
+                  type: integer
+                  example: 21
+            08-22:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        Victoria:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    Unemployment:
+      type: object
+      properties:
+        03-21:
+          type: object
+          properties:
+            percOfUnempl:
+              type: float
+              example: 5.0873625
+        04-21:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    FutureUnemployment:
+      type: object
+      properties:
+        07-22:
+          type: object
+          properties:
+            percOfUnempl:
+              type: float
+              example: 3.1982642
+        08-22:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    Jobs:
+      type: object
+      properties:
+        03-21:
+          type: object
+          properties:
+            it-jobs:
+              type: object
+              properties:
+                avgSalary:
+                  type: float
+                  example: 134470.65
+                jobTitle:
+                  type: string
+                  example: IT Jobs
+            sales-jobs:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        04-21:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    FutureSalaries:
+      type: object
+      properties:
+        07-22:
+          type: object
+          properties:
+            it-jobs:
+              type: object
+              properties:
+                avgSalary:
+                  type: float
+                  example: 136492.12
+                jobTitle:
+                  type: string
+                  example: IT Jobs
+            sales-jobs:
+              type: object
+              properties:
+                ...:
+                  type: object
+            ...:
+              type: object
+        08-22:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    Stocks:
+      type: object
+      properties:
+        03-21:
+          type: object
+          properties:
+            BHP:
+              type: float
+              example: 37.91
+            CBA:
+              type: float
+              example: 68.28
+            ...:
+              type: object
+        04-21:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    FutureStocks:
+      type: object
+      properties:
+        07-22:
+          type: object
+          properties:
+            BHP:
+              type: float
+              example: 41.93
+            CBA:
+              type: float
+              example: 69.98
+            ...:
+              type: object
+        08-22:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    Exchrate:
+      type: object
+      properties:
+        currency_code:
+          type: string
+          example: AUD
+        currency_name:
+          type: string
+          example: Australian Dollars
+        03-21:
+          type: float
+          example: 1.3758
+        04-21:
+          type: float
+          example: 1.3958
+        ...:
+          type: object
+    FutureExchangeRates:
+      type: object
+      properties:
+        07-22:
+          type: object
+          properties:
+            rate:
+              type: float
+              example: 1.5758
+        08-22:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    RealEstate:
+      type: object
+      properties:
+        03-21:
+          type: object
+          properties:
+            National Average:
+              type: float
+              example: 144.3
+            Greater Sydney:
+              type: float
+              example: 167.6
+            ...:
+              type: object
+        04-21:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
+    FutureRealEstate:
+      type: object
+      properties:
+        07-22:
+          type: object
+          properties:
+            National Average:
+              type: float
+              example: 153.7
+            Greater Sydney:
+              type: float
+              example: 182.9
+            ...:
+              type: object
+        08-22:
+          type: object
+          properties:
+            ...:
+              type: object
+        ...:
+          type: object
