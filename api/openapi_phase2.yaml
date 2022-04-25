@@ -1,0 +1,1004 @@
+openapi: 3.0.1
+info:
+  title: ProMED API
+  description: A RESTful API to process user queries to our databse of disease reports constructed from the ProMED website as well as access external sources for our frontend IOP application
+  contact:
+    email: megapixelsseng3011@gmail.com
+  version: 1.0.0
+servers:
+- url: "https://p5t20q9fz6.execute-api.ap-southeast-2.amazonaws.com/ProMedApi"
+tags:
+- name: ProMED
+  description: Endpoints to query our ProMED database of scraped website data
+- name: Historical
+  description: Endpoints to return historical Covid-19 data
+- name: Predictive
+  description: Endpoints to return predictive Covid-19 data
+paths:
+  /live:
+    get:
+      tags:
+      - ProMED
+      summary: Check if the API server is live
+      description: The server will return its live status and active version
+      operationId: live
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Live"
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Live_Error"
+      x-swagger-router-controller: Live
+  /search:
+    get:
+      tags:
+      - ProMED
+      summary: Search the ProMED database
+      description: Enter parameters to perform a search that will return all valid ProMED disease reports
+      operationId: search
+      parameters:
+      - name: start_date
+        in: query
+        description: The start date of the period of interest for disease reports (must be in yyyy-MM-dd format)
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: '2022-03-05'
+      - name: end_date
+        in: query
+        description: The end date of the period of interest for disease reports (must be in yyyy-MM-dd format)
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: '2022-03-07'
+      - name: key_terms
+        in: query
+        description: A list of key terms to find in disease reports. These may be names of diseases or syndromes that may appear in articles
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: array
+          example:
+          - measles
+          - outbreak
+          items:
+            type: string
+      - name: location
+        in: query
+        description: The location of interest for disease reports
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: australia
+      - name: timezone
+        in: query
+        description: The timezone of interest for disease reports (optional)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: utc+10
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Search'
+                x-content-type: application/json
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Search_Error'
+                x-content-type: application/json
+      x-swagger-router-controller: Search
+  /article:
+    get:
+      tags:
+      - ProMED
+      summary: Request a specific article
+      description: Enter article ID to perform a request
+      operationId: article
+      parameters:
+      - name: article_id
+        in: query
+        description: The ID of the requested article
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 8701991
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article_Error'
+      x-swagger-router-controller: Article
+  /report:
+    get:
+      tags:
+      - ProMED
+      summary: Request a specific disease report
+      description: Enter report ID to perform a request
+      operationId: report
+      parameters:
+      - name: report_id
+        in: query
+        description: The ID of the requested report
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          example: 21
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report_Error'
+      x-swagger-router-controller: Report
+  /globalcovid:
+    get:
+      tags:
+      - Historical
+      summary: Return a global summary of historical covid data
+      description: This endpoint returns the number of cases, deaths, and vaccination rate per month for each country
+      operationId: globalcovid
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalCovid'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalCovid_Error'
+      x-swagger-router-controller: GlobalCovid
+  /futureglobalcovid:
+    get:
+      tags:
+      - Predictive
+      summary: Return a global summary of predictive covid data
+      description: This endpoint returns the number of cases, deaths, and vaccination rate per month for each country
+      operationId: futureglobalcovid
+      parameters:
+      - name: masks
+        in: query
+        description: Whether or not the prediction should include a mask mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      - name: social_distancing
+        in: query
+        description: Whether or not the prediction should include a social distancing mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      - name: lockdown
+        in: query
+        description: Whether or not the prediction should include a lockdown mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureGlobalCovid'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureGlobalCovid_Error'
+      x-swagger-router-controller: FutureGlobalCovid
+  /countrycovid:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical covid data
+      description: This endpoint returns the number of new cases and deaths per month for a specific country
+      operationId: countrycovid
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryCovid'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryCovid_Error'
+      x-swagger-router-controller: CountryCovid
+  /futurecountrycovid:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive covid data
+      description: This endpoint returns the number of new cases and deaths per month for a specific country
+      operationId: futurecountrycovid
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      - name: masks
+        in: query
+        description: Whether or not the prediction should include a mask mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      - name: social_distancing
+        in: query
+        description: Whether or not the prediction should include a social distancing mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      - name: lockdown
+        in: query
+        description: Whether or not the prediction should include a lockdown mandate (non-empty string means true)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: yes
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureCountryCovid'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureCountryCovid_Error'
+      x-swagger-router-controller: FutureCountryCovid
+  /unemployment:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical unemployment rates
+      description: This endpoint returns the unemployment rates for a specific country
+      operationId: unemployment
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unemployment'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unemployment_Error'
+      x-swagger-router-controller: Unemployment
+  /futureunemployment:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive unemployment rates
+      description: This endpoint returns the unemployment rates for a specific country
+      operationId: futureunemployment
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureUnemployment'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureUnemployment_Error'
+      x-swagger-router-controller: FutureUnemployment
+  /jobs:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical job salaries
+      description: This endpoint returns the job salaries for a number of professions for a specific country
+      operationId: jobs
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jobs'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jobs_Error'
+      x-swagger-router-controller: Jobs
+  /futuresalaries:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive job salaries
+      description: This endpoint returns the job salaries for a number of professions for a specific country
+      operationId: futuresalaries
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureSalaries'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureSalaries_Error'
+      x-swagger-router-controller: FutureSalaries
+  /stocks:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical stock information
+      description: This endpoint returns information on the top 10 stocks for a specific country
+      operationId: stocks
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stocks'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stocks_Error'
+      x-swagger-router-controller: Stocks
+  /futurestocks:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive stock information
+      description: This endpoint returns information on the top 10 stocks for a specific country
+      operationId: futurestocks
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureStocks'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureStocks_Error'
+      x-swagger-router-controller: FutureStocks
+  /exchrate:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical exchange rate information
+      description: This endpoint returns information on the exchange rate of a specific country relative to USD
+      operationId: exchrate
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exchrate'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exchrate_Error'
+      x-swagger-router-controller: Exchrate
+  /futureexchangerates:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive exchange rate information
+      description: This endpoint returns information on the exchange rate of a specific country relative to USD
+      operationId: futureexchangerates
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureExchangeRates'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureExchangeRates_Error'
+      x-swagger-router-controller: FutureExchangeRates
+  /realestate:
+    get:
+      tags:
+      - Historical
+      summary: Return a country summary of historical real estate information
+      description: This endpoint returns information on the average housing prices for a specific country based on the House Price Index
+      operationId: realestate
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RealEstate'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RealEstate_Error'
+      x-swagger-router-controller: RealEstate
+  /futurerealestate:
+    get:
+      tags:
+      - Predictive
+      summary: Return a country summary of predictive real estate information
+      description: This endpoint returns information on the average housing prices for a specific country based on the House Price Index
+      operationId: futurerealestate
+      parameters:
+      - name: country
+        in: query
+        description: The 3-digit ISO country code of the country of interest
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: AUS
+      responses:
+        "200":
+          description: OK
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureRealEstate'
+        "400":
+          description: Bad Request
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FutureRealEstate_Error'
+      x-swagger-router-controller: FutureRealEstate
+components:
+  schemas:
+    Live:
+      type: object
+      properties:
+        live:
+          type: boolean
+          example: true
+        version:
+          type: string
+          example: 1.0.0
+      example:
+        version: 1.0.0
+        live: true
+    Live_Error:
+      type: object
+      properties:
+        live:
+          type: boolean
+          example: false
+        version:
+          type: string
+          example: 1.0.0
+      example:
+        version: 1.0.0
+        live: false
+    Search:
+      type: object
+      properties:
+        url:
+          type: string
+          example: www.promed.com/measles-outbreak-sydney-2022
+        date_of_publication:
+          type: string
+          example: 2022-01-05 xx:xx:xx
+        headline:
+          type: string
+          example: Measles Outbreak in Sydney
+        main_text:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+            \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+            \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae\
+            \ mauris volutpat dignissim. Cras facilisis dui eleifend viverra sagittis.\
+            \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
+            \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
+            \ vel nunc eu  lobortis."
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_Reports'
+      example:
+        reports:
+        - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          locations:
+          - country: Australia
+            location: Sydney
+          syndromes:
+          - outbreak
+        - event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+          diseases:
+          - measles
+          locations:
+          - country: Australia
+            location: Sydney
+          syndromes:
+          - outbreak
+        date_of_publication: 2022-01-05 xx:xx:xx
+        main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+          \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+          \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae mauris\
+          \ volutpat dignissim. Cras facilisis dui eleifend viverra sagittis. Cras\
+          \ eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus blandit\
+          \ maximus mi, quis lacinia odio viverra ac. Phasellus dapibus vel nunc eu\
+          \  lobortis."
+        headline: Measles Outbreak in Sydney
+        url: www.promed.com/measles-outbreak-sydney-2022
+    Search_Reports:
+      type: object
+      properties:
+        event_date:
+          type: string
+          example: 2022-01-05 xx:xx:xx to 2022-01-05
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_Locations'
+        diseases:
+          type: array
+          items:
+            type: string
+            example: measles
+        syndromes:
+          type: array
+          items:
+            type: string
+            example: outbreak
+    Search_Locations:
+      type: object
+      properties:
+        country:
+          type: string
+          example: Australia
+        location:
+          type: string
+          example: Sydney
+      example:
+        country: Australia
+        location: Sydney
+    Search_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: end_date before start_date'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
+    Article:
+      type: object
+      properties:
+        url:
+          type: string
+          example: www.promed.com/measles-outbreak-sydney-2022
+        date_of_publication:
+          type: string
+          example: 2022-01-05 xx:xx:xx
+        headline:
+          type: string
+          example: Measles Outbreak in Sydney
+        main_text:
+          type: string
+          example: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+            \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+            \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae\
+            \ mauris volutpat dignissim. Cras facilisis dui eleifend viverra sagittis.\
+            \ Cras eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus\
+            \ blandit maximus mi, quis lacinia odio viverra ac. Phasellus dapibus\
+            \ vel nunc eu  lobortis."
+      example:
+        date_of_publication: 2022-01-05 xx:xx:xx
+        main_text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent\
+          \ convallis elit at leo finibus, a ultricies enim accumsan. Donec elementum\
+          \ sagittis quam, ac dapibus erat aliquam id. Phasellus et libero vitae mauris\
+          \ volutpat dignissim. Cras facilisis dui eleifend viverra sagittis. Cras\
+          \ eu augue vitae elit vestibulum accumsan quis at dolor. Phasellus blandit\
+          \ maximus mi, quis lacinia odio viverra ac. Phasellus dapibus vel nunc eu\
+          \  lobortis."
+        headline: Measles Outbreak in Sydney
+        url: www.promed.com/measles-outbreak-sydney-2022
+    Article_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: invalid article ID'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
+    Report:
+      type: object
+      properties:
+        event_date:
+          type: string
+          example: 2022-01-05 xx:xx:xx to 2022-01-05
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Search_Locations'
+        diseases:
+          type: array
+          items:
+            type: string
+            example: measles
+        syndromes:
+          type: array
+          items:
+            type: string
+            example: outbreak
+      example:
+        event_date: 2022-01-05 xx:xx:xx to 2022-01-05
+        diseases:
+        - measles
+        locations:
+        - country: Australia
+          location: Sydney
+        syndromes:
+        - outbreak
+    Report_Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+          example: 'Error: invalid report ID'
+        errorType:
+          type: string
+          example: Exception
+        stackTrace:
+          type: array
+          items:
+            type: string
+            example: raise Exception
